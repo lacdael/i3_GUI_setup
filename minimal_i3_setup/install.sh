@@ -28,12 +28,19 @@ apt-get install compton
 #Install program launcher
 apt-get install rofi
 
+apt-get install udiskie
+apt-get install clipie
+apt-get install smbclient
+apt-get install cifs-utils
+apt-get install vim-gtk
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 #Move config files and scripts
 sudo -u $name cp $DIR/.xinitrc /home/$name
 chmod +x /home/$name/.xinitrc
 sudo -u $name cp $DIR/.profile /home/$name
+sudo -u $name cp $DIR/.Xresources /home/$name
 sudo -u $name cp -R $DIR/Pictures /home/$name
 sudo -u $name mkdir /home/$name/Documents
 sudo -u $name cp -R $DIR/.config /home/$name

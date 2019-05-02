@@ -21,4 +21,9 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
 
-xinit
+#Start UI
+startx
+#Set contrast
+xgamma -gamma 0.7
+#Set editor to vim.gtk (for ctl+c/v)
+export EDITOR=vim.gtk

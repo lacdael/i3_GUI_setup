@@ -32,6 +32,19 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
+# networking
+bindsym $mod+i exec i3-sensible-terminal -e nmtui-connect
+
+#Brightness
+bindsym XF86MonBrightnessUp exec "xrandr --output LVDS-1 --brightness 1.0"
+bindsym XF86MonBrightnessDown exec "xrandr --output LVDS-1 --brightness 0.6"
+
+#Volume
+bindsym XF86AudioRaiseVolume exec "amixer -q set Master 2dB+ unmute"
+bindsym XF86AudioLowerVolume exec "amixer -q set Master 2dB- unmute"
+bindsym XF86AudioMute exec "amixer -q set Master toggle"
+
+
 # kill focused window
 bindsym $mod+Shift+q kill
 
@@ -162,3 +175,9 @@ bar {
 exec_always --no-startup-id feh --bg-scale ~/Pictures/background.jpg &
 
 exec --no-startup-id /usr/bin/compton --config ~/.config/compton.conf &
+
+#automount drives
+exec --no-startup-id udiskie -Nt2 &
+
+#clipboard manager
+exec --no-startup-id clipit &
