@@ -29,7 +29,7 @@ apt-get install compton
 apt-get install rofi
 
 apt-get install udiskie
-apt-get install clipie
+apt-get install clipit
 apt-get install smbclient
 apt-get install cifs-utils
 apt-get install vim-gtk
