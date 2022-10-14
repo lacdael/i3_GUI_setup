@@ -26,4 +26,17 @@ startx
 #Set contrast
 #xgamma -gamma 0.7
 #Set editor to vim.gtk (for ctl+c/v)
-export EDITOR=vim.gtk
+#export EDITOR=vim.gtk
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+#export JAVA_HOME=/usr/lib/jvm/openlogic-openjdk-8-hotspot-amd64
+#export ANDROID_SDK_ROOT=/opt/Android/Sdk
+#export PATH=${PATH}:/opt/Android/Sdk/platform-tools:/opt/Android/Sdk/build-tools
+#PATH="$PATH:/opt/flutter/bin"
+#PATH="/home/christian/.local/share/solana/install/active_release/bin:$PATH"
+
+alias serve="python -m SimpleHTTPServer"
+#alias backup="rsync -avh --delete --exclude-from=rsync-homedir-excludes.txt /home/christian/ /media/christian/BACKUP/SYNC"
+alias shutdown="sudo shutdown now"
