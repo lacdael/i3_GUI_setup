@@ -6,4 +6,4 @@ if [ -f "$userresources" ]; then
 	xrdb -merge "$userresources"
 fi
 
-/usr/bin/i3
+exec dbus-run-session -- /usr/bin/i3
