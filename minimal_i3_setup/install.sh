@@ -1,6 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
 
+if [[ -z "${PATH:-}" ]]; then
+    export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+fi
+
 trap 'printf "Installation failed at line %s (exit status %s).\n" "$LINENO" "$?" >&2' ERR
 
 fail() {
@@ -36,8 +40,9 @@ IFS=: read -r account_name _ account_uid _ _ user_home _ <<< "$account"
 # Install everything in one transaction; stop before copying files if apt fails.
 packages=(
     x-window-system sudo i3 i3blocks ranger feh flameshot compton rofi
-    udiskie clipit smbclient cifs-utils vim-gtk
+    udiskie diodon smbclient cifs-utils vim-gui-common vim-gtk3
     brightnessctl pamixer xsel xterm w3m network-manager dbus x11-xserver-utils
+    keyboard-configuration console-setup
 )
 apt-get update
 apt-get install -y "${packages[@]}"
@@ -57,5 +62,9 @@ for directory in Pictures .config; do
     sudo -u "$name" cp -R --backup=numbered -- "$DIR/$directory/." "$user_home/$directory/"
 done
 
+# Configure the system-wide keyboard layout, including the login screen.
+printf 'Configure your keyboard: choose Generic 105-key PC (unless your model is listed), then English (UK) for a UK keyboard.\n'
+dpkg-reconfigure keyboard-configuration
+
 printf 'Setup complete for %s. Existing files were backed up with numbered suffixes.\n' "$name"
-printf 'Log out and log back in to apply the changes.\n'
+printf 'Save your work, then run sudo reboot to apply all changes, including the login-screen keyboard layout.\n'

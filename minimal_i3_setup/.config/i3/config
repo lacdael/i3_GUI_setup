@@ -191,6 +191,6 @@ exec_always --no-startup-id feh --bg-scale ~/Pictures/background.jpg &
 exec --no-startup-id /usr/bin/compton --config ~/.config/compton.conf &
 
 #clipboard manager
-exec --no-startup-id clipit &
+exec --no-startup-id diodon &
 
 exec --no-startup-id udiskie -t -a -N &
