@@ -35,15 +35,29 @@ bindsym $mod+Return exec i3-sensible-terminal
 # networking
 bindsym $mod+i exec i3-sensible-terminal -e nmtui-connect
 
+bindsym Print exec --no-startup-id flameshot gui
+
 #Brightness
-bindsym XF86MonBrightnessUp exec "xrandr --output LVDS-1 --brightness 1.0"
-bindsym XF86MonBrightnessDown exec "xrandr --output LVDS-1 --brightness 0.6"
+# Increase brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +10%
+
+# Decrease brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%-
+
+#Brightness
+#bindsym XF86MonBrightnessUp exec /usr/local/displayBrightnessUp
+#bindsym XF86MonBrightnessDown exec /usr/local/displayBrightnesDown
 
 #Volume
-bindsym XF86AudioRaiseVolume exec "amixer -q set Master 2dB+ unmute"
-bindsym XF86AudioLowerVolume exec "amixer -q set Master 2dB- unmute"
-bindsym XF86AudioMute exec "amixer -q set Master toggle"
+# Volume control
+bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer -i 5
+bindsym XF86AudioLowerVolume exec --no-startup-id pamixer -d 5
+bindsym XF86AudioMute exec --no-startup-id pamixer -t
 
+
+
+# Keybinding to open URL from clipboard 
+bindsym $mod+u exec --no-startup-id sh -c 'xsel --clipboard --output | xargs -r xterm -e w3m'
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -56,7 +70,7 @@ bindsym $mod+d exec "rofi -combi-modi drun -show combi"
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
 #open file browser
-bindsym $mod+o exec i3-sensible-terminal  /usr/bin/ranger
+bindsym $mod+o exec xterm -e ranger
 
 # change focus
 bindsym $mod+j focus left
@@ -176,8 +190,7 @@ exec_always --no-startup-id feh --bg-scale ~/Pictures/background.jpg &
 
 exec --no-startup-id /usr/bin/compton --config ~/.config/compton.conf &
 
-#automount drives
-exec --no-startup-id udiskie -Nt2 &
-
 #clipboard manager
 exec --no-startup-id clipit &
+
+exec --no-startup-id udiskie -t -a -N &

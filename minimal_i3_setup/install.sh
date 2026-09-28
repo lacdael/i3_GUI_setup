@@ -1,48 +1,61 @@
 #!/bin/bash
+set -Eeuo pipefail
 
-if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run as root"
-	exit 1
+trap 'printf "Installation failed at line %s (exit status %s).\n" "$LINENO" "$?" >&2' ERR
+
+fail() {
+    printf 'Error: %s\n' "$*" >&2
+    exit 1
+}
+
+[[ $EUID -eq 0 ]] || fail 'Run this script as root (for example, with sudo).'
+[[ $# -le 1 ]] || fail "Usage: $0 [username]"
+
+for command in apt-get getent id usermod; do
+    command -v "$command" >/dev/null || fail "Required command not found: $command"
+done
+
+DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+for file in .xinitrc .profile .Xresources .vimrc .rsync-homedir-excludes.txt; do
+    [[ -f "$DIR/$file" && -r "$DIR/$file" ]] || fail "Missing or unreadable source: $DIR/$file"
+done
+for directory in Pictures .config; do
+    [[ -d "$DIR/$directory" ]] || fail "Missing source directory: $DIR/$directory"
+done
+
+name="${1:-${SUDO_USER:-}}"
+if [[ -z "$name" || "$name" == root ]]; then
+    read -r -p 'Enter the username to configure: ' name || fail 'No username supplied.'
 fi
+[[ -n "$name" && "$name" != -* && "$name" != *:* ]] || fail 'Invalid username.'
+account="$(getent passwd "$name")" || fail "User does not exist: $name"
+IFS=: read -r account_name _ account_uid _ _ user_home _ <<< "$account"
+[[ "$account_name" == "$name" && "$account_uid" != 0 ]] || fail 'Select an existing non-root user.'
+[[ "$user_home" == /* && "$user_home" != / && -d "$user_home" ]] || fail "Invalid or missing home directory: $user_home"
 
+# Install everything in one transaction; stop before copying files if apt fails.
+packages=(
+    x-window-system sudo i3 i3blocks ranger feh flameshot compton rofi
+    udiskie clipit smbclient cifs-utils vim-gtk
+    brightnessctl pamixer xsel xterm w3m network-manager dbus x11-xserver-utils
+)
 apt-get update
+apt-get install -y "${packages[@]}"
 
-#X window
-apt-get install x-window-system
-#sudo
-apt-get install sudo
-#Make you a sudoer
-echo "Enter your username:"
-read name
-usermod -a -G sudo $name
-#Install i3 : window manager
-apt-get install i3
-#Install i3blocks : status bar
-apt-get install i3blocks
-#Install a file browser
-apt-get install ranger
-#Install a picture viewer
-apt-get install feh
-#Install a compositor
-apt-get install compton
-#Install program launcher
-apt-get install rofi
+getent group sudo >/dev/null || fail 'The sudo group does not exist.'
+usermod -a -G sudo "$name"
 
-apt-get install udiskie
-apt-get install clipit
-apt-get install smbclient
-apt-get install cifs-utils
-apt-get install vim-gtk
+# Run file operations as the target user so new files have the correct owner.
+# Merge directories and retain numbered backups of any overwritten files.
+sudo -u "$name" test -w "$user_home" || fail "Home directory is not writable by $name: $user_home"
+sudo -u "$name" mkdir -p -- "$user_home/Documents" "$user_home/Pictures" "$user_home/.config"
+for file in .xinitrc .profile .Xresources .vimrc .rsync-homedir-excludes.txt; do
+    sudo -u "$name" cp --backup=numbered -- "$DIR/$file" "$user_home/$file"
+done
+sudo -u "$name" chmod u+x -- "$user_home/.xinitrc"
+for directory in Pictures .config; do
+    sudo -u "$name" cp -R --backup=numbered -- "$DIR/$directory/." "$user_home/$directory/"
+done
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-#Move config files and scripts
-sudo -u $name cp $DIR/.xinitrc /home/$name
-chmod +x /home/$name/.xinitrc
-sudo -u $name cp $DIR/.profile /home/$name
-sudo -u $name cp $DIR/.Xresources /home/$name
-sudo -u $name cp -R $DIR/Pictures /home/$name
-sudo -u $name mkdir /home/$name/Documents
-sudo -u $name cp -R $DIR/.config /home/$name
-
-echo "Now logout and log back in"
+printf 'Setup complete for %s. Existing files were backed up with numbered suffixes.\n' "$name"
+printf 'Log out and log back in to apply the changes.\n'

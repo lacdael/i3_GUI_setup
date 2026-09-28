@@ -1,6 +1,6 @@
 #!/bin/sh
 
-userresources=/home/christian/.Xresources
+userresources="$HOME/.Xresources"
 
 if [ -f "$userresources" ]; then
 	xrdb -merge "$userresources"
