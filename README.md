@@ -159,16 +159,12 @@ These are additional applications to consider separately. They are not installed
 | Audio editor | Audacity |
 | Media player | mpv |
 | Browser | Midori |
-| PCB designer | KiCad |
+| PCB designer | KiCAD |
 | Image editor | GIMP |
 | 3D designer | FreeCAD |
 | Android screen mirroring | scrcpy |
 | Video downloader | yt-dlp |
 | EPUB editor | Sigil |
 | Screen recorder | Kazam |
+| Monitor management | mons |          
 
-## Programming
-
-- Android Studio and Flutter
-- STM32CubeIDE
-- Arduino IDE
