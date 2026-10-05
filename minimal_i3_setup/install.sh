@@ -1,4 +1,6 @@
 #!/bin/bash
+# v0.1
+
 set -Eeuo pipefail
 
 if [[ -z "${PATH:-}" ]]; then
